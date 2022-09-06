@@ -39,6 +39,24 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+
+
+@app.route('/registraruser',  methods=['POST'])
+def set_user():
+    datos = request.get_json()
+    if (datos is None):
+        return 'Falta información'
+    if ('email' not in datos):
+        return 'Falta email'
+    if ('password' not in datos):
+        return 'Falta Password'
+    new_user = User.query.filter_by(email = datos['email']).first()
+    if (new_user is None):
+        new_user = User(name = datos['name'], email = datos['email'], password = datos['password'], is_active = True)
+        db.session.add(new_user)
+        db.session.commit()
+        return 'Usuario Registrado'     
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
